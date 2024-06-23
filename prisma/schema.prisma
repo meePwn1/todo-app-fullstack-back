@@ -1,0 +1,44 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Todo {
+  id        String   @id @default(cuid())
+  title     String   @db.VarChar(255)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  order     Int
+  Task      Task[]
+
+  @@map("todo")
+}
+
+model Task {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  title       String   @db.VarChar(255)
+  description String   @db.Text
+  status      Int
+  priority    Int
+  startDate   DateTime
+  deadline    DateTime
+  completed   Boolean  @default(false)
+  order       Int
+  todo        Todo     @relation(fields: [todoId], references: [id])
+  todoId      String   @map("todo_id")
+
+  @@map("task")
+}
