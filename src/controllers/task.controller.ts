@@ -1,19 +1,19 @@
-import { Request, Response } from 'express'
+import { NextFunction, Request, Response } from 'express'
 import { HttpStatus } from '../constants/status_codes'
 import TaskService from '../services/task.service'
 
 class TaskController {
-	async getTasks(req: Request, res: Response) {
+	async getTasks(req: Request, res: Response, next: NextFunction) {
 		try {
 			const { todosId } = req.params
 			const tasks = await TaskService.getTasks(todosId)
 			res.status(HttpStatus.OK).json(tasks)
 		} catch (error) {
-			res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: 'Internal server error' })
+			next(error)
 		}
 	}
 
-	async createTask(req: Request, res: Response) {
+	async createTask(req: Request, res: Response, next: NextFunction) {
 		try {
 			const { todosId } = req.params
 			const { title } = req.body
@@ -23,11 +23,11 @@ class TaskController {
 			})
 			res.status(201).json(task)
 		} catch (error) {
-			res.status(500).json({ error: 'Internal server error' })
+			next(error)
 		}
 	}
 
-	async updateTask(req: Request, res: Response) {
+	async updateTask(req: Request, res: Response, next: NextFunction) {
 		try {
 			const { id, todosId } = req.params
 			const { title, completed } = req.body
@@ -38,17 +38,17 @@ class TaskController {
 			})
 			res.status(200).json(task)
 		} catch (error) {
-			res.status(500).json({ error: 'Internal server error' })
+			next(error)
 		}
 	}
 
-	async deleteTask(req: Request, res: Response) {
+	async deleteTask(req: Request, res: Response, next: NextFunction) {
 		try {
 			const { id, todosId } = req.params
 			await TaskService.deleteTask(id, todosId)
 			res.status(204).send()
 		} catch (error) {
-			res.status(500).json({ error: 'Internal server error' })
+			next(error)
 		}
 	}
 }
