@@ -4,6 +4,19 @@ import dotenv from 'dotenv'
 import express from 'express'
 import taskRoutes from './routes/task.routes'
 import todosRoutes from './routes/todos.routes'
+import prisma from './utils/prismaClient'
+
+async function main() {
+	try {
+		await prisma.$connect()
+		console.log('Successfully connected to PostgreSQL')
+	} catch (error) {
+		console.error('Error:', error)
+	} finally {
+		await prisma.$disconnect()
+	}
+}
+main()
 
 dotenv.config()
 
